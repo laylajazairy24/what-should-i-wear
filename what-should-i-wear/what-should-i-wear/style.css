@@ -1,0 +1,214 @@
+/* ===============================
+   WHAT SHOULD I WEAR? — style.css
+   =============================== */
+
+body {
+  margin: 0;
+  padding: 20px;
+  font-family: "Quicksand", sans-serif;
+  color: #5a3d5c;
+  text-align: center;
+  transition: background-color 1.5s;
+}
+
+/* ---- background colour changes with the temperature ----
+   script.js sets document.body.className to cold / mild / warm */
+.cold {
+  background-color: #dfe7ff;   /* icy lavender-blue */
+}
+
+.mild {
+  background-color: #ffe4ec;   /* blush pink */
+}
+
+.warm {
+  background-color: #ffe0c7;   /* soft peach */
+}
+
+/* ---- header ---- */
+h1 {
+  font-family: "Pacifico", cursive;
+  font-size: 48px;
+  font-weight: normal;
+  margin: 10px 0 0 0;
+  color: #d96a9a;
+}
+
+.tagline {
+  margin-top: 5px;
+  font-size: 18px;
+}
+
+/* ---- buttons ---- */
+button {
+  font-family: "Quicksand", sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  color: #5a3d5c;
+  background-color: white;
+  border: 2px solid #f4a7c3;
+  border-radius: 30px;
+  padding: 10px 18px;
+  margin: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.3s;
+}
+
+button:hover {
+  background-color: #f9c8da;
+  transform: scale(1.05);
+}
+
+/* the city that is currently picked */
+.active {
+  background-color: #f4a7c3;
+  color: white;
+}
+
+/* ---- main layout (flexbox) ---- */
+main {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-top: 20px;
+}
+
+#closet,
+#weather-card {
+  margin: 15px;
+  padding: 20px;
+  background-color: rgba(255, 255, 255, 0.7);
+  border-radius: 30px;
+  border: 2px dashed #f4a7c3;
+}
+
+#closet {
+  width: 340px;
+  overflow: hidden;   /* keeps the hearts inside the box */
+}
+
+#weather-card {
+  width: 340px;
+}
+
+/* ---- outfit + accessory (accessory sits on top) ---- */
+#mirror {
+  position: relative;
+  width: 300px;
+  height: 400px;
+  margin: 0 auto;
+}
+
+#outfit {
+  width: 300px;
+  height: 400px;
+  border-radius: 20px;
+}
+
+#accessory {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 110px;
+  height: 110px;
+}
+
+/* ---- hearts that move with the wind ---- */
+#heart-row {
+  margin-top: 10px;
+  text-align: left;
+}
+
+.heart {
+  display: inline-block;
+  font-size: 28px;
+  color: #e57aa5;
+  transition: transform 2s;
+}
+
+/* ---- weather text ---- */
+#city-name {
+  font-family: "Pacifico", cursive;
+  font-weight: normal;
+  font-size: 34px;
+  margin: 5px;
+}
+
+#temperature {
+  font-size: 56px;
+  font-weight: 600;
+  margin: 5px;
+}
+
+#weather-type,
+#wind {
+  font-size: 18px;
+  margin: 5px;
+}
+
+#message {
+  font-size: 20px;
+  font-weight: 600;
+  background-color: white;
+  border-radius: 20px;
+  padding: 12px;
+  margin: 15px 0;
+}
+
+#updated {
+  font-size: 13px;
+  opacity: 0.7;
+}
+
+/* ---- footer / credits ---- */
+footer {
+  margin-top: 30px;
+  font-size: 14px;
+}
+
+footer a {
+  color: #d96a9a;
+}
+
+/* ===============================
+   RESPONSIVE: phones + small screens
+   =============================== */
+@media screen and (max-width: 700px) {
+
+  h1 {
+    font-size: 34px;
+  }
+
+  main {
+    flex-direction: column;
+  }
+
+  #closet,
+  #weather-card {
+    width: 90%;
+    margin: 10px 0;
+    padding: 15px;
+  }
+
+  #mirror,
+  #outfit {
+    width: 240px;
+    height: 320px;
+  }
+
+  #accessory {
+    width: 85px;
+    height: 85px;
+  }
+
+  #temperature {
+    font-size: 44px;
+  }
+
+  button {
+    font-size: 14px;
+    padding: 8px 14px;
+  }
+}
