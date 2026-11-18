@@ -5,10 +5,10 @@
 
 
 // ---------- 1. CITIES (arrays) ----------
-// same index = same city (0 = Toronto, 1 = Paris, 2 = Dubai)
-let cityNames  = ["Toronto", "Paris", "Dubai"];
-let latitudes  = [43.65, 48.85, 25.20];
-let longitudes = [-79.38, 2.35, 55.27];
+// same index = same city (0 = Toronto, 1 = Paris, 2 = Dubai, 3 = last searched)
+let cityNames  = ["Toronto", "Paris", "Dubai", "Search"];
+let latitudes  = [43.65, 48.85, 25.20, 0];
+let longitudes = [-79.38, 2.35, 55.27, 0];
 
 
 // ---------- 2. OUTFIT IMAGES (arrays) ----------
@@ -107,7 +107,7 @@ function pickOutfit() {
   }
 
   outfitIndex = 0;
-  outfitImg.src = currentOutfits[outfitIndex];
+  swapOutfitImage(currentOutfits[outfitIndex]);
 }
 
 
@@ -162,23 +162,48 @@ function changeCity(index) {
   currentCity = index;
   document.querySelector("#city-name").textContent = cityNames[currentCity];
 
-  // highlight the picked city button
+  // clear the highlight on every button
   for (let i = 0; i < cityButtons.length; i++) {
     cityButtons[i].className = "city-btn";
   }
-  cityButtons[currentCity].className = "city-btn active";
+  // searched cities (slot 3) have no button, so only highlight if one exists
+  if (cityButtons[currentCity]) {
+    cityButtons[currentCity].className = "city-btn active";
+  }
 
   getWeather();
 }
 
 
 // ---------- 12. INTERACTION: shuffle outfit ----------
+// OUTFIT SWAP ANIMATION: fade + slide out, change the image while hidden,
+// then the CSS transition brings it back in (see #outfit.fade-out in style.css)
+let swapTimer = null;
+
+function swapOutfitImage(newSrc) {
+  if (outfitImg.getAttribute("src") === newSrc) return;   // already showing it
+
+  clearTimeout(swapTimer);                 // a quick second click restarts the swap
+  outfitImg.classList.add("fade-out");
+
+  swapTimer = setTimeout(() => {
+    outfitImg.src = newSrc;
+    outfitImg.classList.remove("fade-out");   // fades back in
+  }, 400);                                    // matches the 0.4s CSS transition
+}
+
 function shuffleOutfit() {
   outfitIndex = outfitIndex + 1;
   if (outfitIndex >= currentOutfits.length) {
     outfitIndex = 0;
   }
-  outfitImg.src = currentOutfits[outfitIndex];
+  swapOutfitImage(currentOutfits[outfitIndex]);
+}
+
+// go back one outfit (used by the left arrow key)
+function prevOutfit() {
+  outfitIndex = (outfitIndex - 1 + currentOutfits.length) % currentOutfits.length;
+  swapOutfitImage(currentOutfits[outfitIndex]);
 }
 
 
@@ -206,6 +231,80 @@ function toggleSound() {
     soundBtn.textContent = "play wind chimes 🎐";
   }
 }
+
+
+// ---------- 15. LOCATION SEARCH (Open-Meteo geocoding) ----------
+// slot 3 in the city arrays holds the last searched place
+const CUSTOM_CITY = 3;
+
+async function searchCity(query) {
+  const status = document.querySelector("#searchStatus");
+  status.textContent = "looking for " + query + "...";
+
+  try {
+    const response = await fetch(
+      "https://geocoding-api.open-meteo.com/v1/search?name=" +
+      encodeURIComponent(query) + "&count=1&language=en&format=json"
+    );
+    const data = await response.json();
+
+    if (!data.results || data.results.length === 0) {
+      status.textContent = "couldn't find that place, try another name";
+      return;
+    }
+
+    const place = data.results[0];
+    cityNames[CUSTOM_CITY] = place.name + (place.country ? ", " + place.country : "");
+    latitudes[CUSTOM_CITY] = place.latitude;
+    longitudes[CUSTOM_CITY] = place.longitude;
+
+    changeCity(CUSTOM_CITY);
+    status.textContent = "showing " + place.name;
+
+  } catch (error) {
+    console.error("Search error:", error);
+    status.textContent = "search didn't work, try again";
+  }
+}
+
+
+// ---------- 16. KEYBOARD SHORTCUTS ----------
+document.addEventListener("keydown", (e) => {
+  // don't hijack typing in the search box
+  if (e.target.tagName === "INPUT") return;
+
+  if (e.key === "ArrowRight")               shuffleOutfit();
+  else if (e.key === "ArrowLeft")           prevOutfit();
+  else if (e.key === "f" || e.key === "F")  switchUnit();
+  else if (e.key === "s" || e.key === "S")  toggleSound();
+  else if (e.key === "r" || e.key === "R")  getWeather();
+  else return;   // other keys: do nothing and don't block them
+
+  e.preventDefault();   // stops the arrow keys from scrolling the page
+});
+
+
+// ---------- 17. SEARCH FORM ----------
+const searchForm  = document.getElementById("searchForm");
+const searchInput = document.getElementById("searchInput");
+
+searchForm.addEventListener("submit", (e) => {
+  e.preventDefault();   // stop the page from reloading
+  const query = searchInput.value.trim();
+  if (query !== "") {
+    searchCity(query);
+  }
+});
+
+
+// ---------- 18. CURSOR-FOLLOWING GRADIENT ----------
+// pointermove covers both mouse and touch
+document.addEventListener("pointermove", (e) => {
+  const x = (e.clientX / window.innerWidth) * 100;
+  const y = (e.clientY / window.innerHeight) * 100;
+  document.body.style.setProperty("--mx", x + "%");
+  document.body.style.setProperty("--my", y + "%");
+});
 
 
 // ---------- START: load Toronto when the page opens ----------
