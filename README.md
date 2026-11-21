@@ -1,7 +1,7 @@
 # What Should I Wear?
 
 CCT360 Project 2 - Data as Experience
-by Layla & Hannah
+by Laila & Hannah
 
 live site: https://laylajazairy24.github.io/what-should-i-wear/
 repo: https://github.com/laylajazairy24/what-should-i-wear
