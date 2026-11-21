@@ -72,5 +72,9 @@ If the fetch fails the page shows a message instead of breaking.
 - wind chime sound: generated tone 
 - slide illustrations: Canva template
 
+AI declaration:
+- figuring out how to connect the wind speed to the hearts moving and the wind chime volume
+- debugging problems, like our GitHub Pages 404 (our files were in the wrong folder)
+- help with drafting then reviewing the content of slides 
 
 
